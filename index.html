@@ -9,7 +9,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
   background: radial-gradient(circle at top, #ff9a9e, #fad0c4);
   min-height: 100vh;
   display: flex;
@@ -87,7 +87,7 @@ button:hover { transform: scale(1.1) rotate(-1deg); }
   background: rgba(255,255,255,0.95);
 }
 
-.card-back { transform: rotateY(180deg); font-weight: bold; }
+.card-back { transform: rotateY(180deg); font-weight: bold; font-size:1.1rem; }
 
 /* Floating emojis */
 .float {
@@ -103,7 +103,7 @@ button:hover { transform: scale(1.1) rotate(-1deg); }
   to { transform: translateY(-120vh); opacity: 0; }
 }
 
-/* Wiggle animation for cards */
+/* Wiggle animation */
 @keyframes giggle {
   0%,100% { transform: rotate(0deg); }
   25% { transform: rotate(-10deg); }
@@ -136,6 +136,7 @@ button:hover { transform: scale(1.1) rotate(-1deg); }
     From this first Valentine to every forever after, my heart is yours… always. ❤️
   </p>
   <p style="margin-top:15px;">– Baava 😘</p>
+  <button class="yes" onclick="goToQuiz()" style="margin-top:15px;">Take a Fun Quiz 🎉</button>
 </div>
 
 <!-- CARDS -->
@@ -174,14 +175,14 @@ valentineDays.forEach(day => {
   `;
   card.onclick = () => {
     card.classList.toggle("flipped"); // flip/unflip
-    if(card.classList.contains("flipped")) spawnHearts(day.emoji);
+    if(card.classList.contains("flipped")) spawnHeartsForYes([day.emoji]); // pass as array
   };
   container.appendChild(card);
 });
 
-// Yes button flow
+// YES button flow
 function startValentine() {
-  spawnHearts("❤️");
+  spawnHeartsForYes(["❤️","💖","💞","✨","🥰"]);
   document.getElementById("quiz").style.display = "none";
   document.getElementById("finalMessage").style.display = "block";
 
@@ -190,34 +191,37 @@ function startValentine() {
   }, 2500);
 }
 
-// Floating hearts
-function spawnHearts(emoji) {
-  const emojis = emoji.length > 2 ? emoji.split("") : [emoji];
-  for(let i=0;i<5;i++){
-    const el = document.createElement("div");
+// YES floating hearts (array of emojis)
+function spawnHeartsForYes(emojis){
+  for(let i=0;i<6;i++){
+    const el=document.createElement("div");
     el.className="float";
-    el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-    el.style.left = Math.random()*100 + "vw";
+    el.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left=Math.random()*100+"vw";
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),6000);
   }
 }
 
-// NO button moves
+// NO button moves (without emojis)
 const noBtn = document.getElementById("noBtn");
 noBtn.addEventListener("mouseover", moveNoButton);
 noBtn.addEventListener("click", moveNoButton);
 
 function moveNoButton() {
-  const parent = noBtn.parentElement;
-  const maxX = parent.clientWidth - noBtn.offsetWidth;
-  const maxY = 50; // limited vertical movement
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
-  noBtn.style.position = "absolute";
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-  spawnHearts("💔😢🥺");
+  const parent=noBtn.parentElement;
+  const maxX=parent.clientWidth-noBtn.offsetWidth;
+  const maxY=50;
+  const x=Math.random()*maxX;
+  const y=Math.random()*maxY;
+  noBtn.style.position="absolute";
+  noBtn.style.left=x+"px";
+  noBtn.style.top=y+"px";
+}
+
+// Navigate to funky quiz page
+function goToQuiz(){
+  window.location.href = "funky_quiz.html"; // your quiz page
 }
 </script>
 
