@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suppu ❤️</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, #ff9a9e, #fad0c4);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  text-align: center;
+  overflow-x: hidden;
+  color: #e75480;
+}
+
+h1 { font-size: 1.8rem; margin-bottom: 10px; }
+h2 { font-size: 1rem; font-weight: normal; margin-bottom: 20px; }
+
+button {
+  padding: 12px 22px;
+  margin: 10px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+button:hover { transform: scale(1.1) rotate(-1deg); }
+
+.yes {
+  background: #ff5f8a;
+  color: white;
+  box-shadow: 0 8px 20px rgba(255,95,138,0.4);
+}
+
+.no { 
+  background: #f3f3f3;
+  position: relative;
+}
+
+/* Cards */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.card {
+  width: 140px;
+  height: 190px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.card.flipped .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255,255,255,0.95);
+}
+
+.card-back { transform: rotateY(180deg); font-weight: bold; }
+
+/* Floating emojis */
+.float {
+  position: absolute;
+  font-size: 1.4rem;
+  animation: floatUp 6s linear infinite;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(100vh); opacity: 0.8; }
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* Wiggle animation for cards */
+@keyframes giggle {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+@media (max-width:480px) {
+  h1 { font-size: 1.5rem; }
+  .card { width: 120px; height: 160px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- QUESTION -->
+<div id="quiz" style="margin-top:40px;">
+  <h1>Suppu, will you be my Valentine? 💕</h1>
+  <div style="text-align:center; position: relative;">
+    <button class="yes" onclick="startValentine()">YES 🥰</button>
+    <button class="no" id="noBtn">NO 🙈</button>
+  </div>
+</div>
+
+<!-- FINAL MESSAGE -->
+<div id="finalMessage" style="display:none; max-width:600px; margin-top:30px;">
+  <h1>❤️ I Love You Suppu ❤️</h1>
+  <p style="font-size:1.1rem; line-height:1.6;">
+    You are my today, my always, and every little heartbeat in between.<br><br>
+    From this first Valentine to every forever after, my heart is yours… always. ❤️
+  </p>
+  <p style="margin-top:15px;">– Baava 😘</p>
+</div>
+
+<!-- CARDS -->
+<div id="cardsSection" style="display:none; width:100%; margin-top:30px;">
+  <h1>To My First Valentine 💖</h1>
+  <h2>Let’s celebrate every day of Valentine’s Week ✨</h2>
+  <div class="cards-container" id="cardsContainer"></div>
+</div>
+
+<script>
+const valentineDays = [
+  { day:"Rose Day", text:"Bloom", emoji:"🌹" },
+  { day:"Propose Day", text:"Promise", emoji:"💍" },
+  { day:"Chocolate Day", text:"Sweetness", emoji:"🍫" },
+  { day:"Teddy Day", text:"Cuddle", emoji:"🧸" },
+  { day:"Promise Day", text:"Forever", emoji:"♾️" },
+  { day:"Hug Day", text:"Warmth", emoji:"🤍" },
+  { day:"Kiss Day", text:"Magic", emoji:"💋" },
+  { day:"Valentine’s Day", text:"Love", emoji:"❤️" }
+];
+
+const container = document.getElementById("cardsContainer");
+
+// create cards
+valentineDays.forEach(day => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front"><p>${day.day}</p></div>
+      <div class="card-back">
+        <p>${day.text}</p>
+        <p style="font-size:2rem;">${day.emoji}</p>
+      </div>
+    </div>
+  `;
+  card.onclick = () => {
+    card.classList.toggle("flipped"); // flip/unflip
+    if(card.classList.contains("flipped")) spawnHearts(day.emoji);
+  };
+  container.appendChild(card);
+});
+
+// Yes button flow
+function startValentine() {
+  spawnHearts("❤️");
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("finalMessage").style.display = "block";
+
+  setTimeout(() => {
+    document.getElementById("cardsSection").style.display = "block";
+  }, 2500);
+}
+
+// Floating hearts
+function spawnHearts(emoji) {
+  const emojis = emoji.length > 2 ? emoji.split("") : [emoji];
+  for(let i=0;i<5;i++){
+    const el = document.createElement("div");
+    el.className="float";
+    el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100 + "vw";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),6000);
+  }
+}
+
+// NO button moves
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseover", moveNoButton);
+noBtn.addEventListener("click", moveNoButton);
+
+function moveNoButton() {
+  const parent = noBtn.parentElement;
+  const maxX = parent.clientWidth - noBtn.offsetWidth;
+  const maxY = 50; // limited vertical movement
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+  noBtn.style.position = "absolute";
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+  spawnHearts("💔😢🥺");
+}
+</script>
+
+</body>
+</html>
